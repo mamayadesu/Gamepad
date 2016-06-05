@@ -19,7 +19,9 @@ function MDGamepad() {
                     if(mdg.gamepad == null) {
                         mdg.gamepad = mdg.gamepads[0];
                         mdg.gamepadtype = mdg.gamepad.id;
-                        mdg.axises = mdg.gamepad.axes;
+                        for(var i in mdg.gamepad.axes) {
+                            mdg.axises[i] = mdg.gamepad.axes[i];
+                        }
                         MDGamepadDoEvent('connected', []);
                         for(var i in mdg.gamepad.buttons) {
                             if(mdg.gamepad.buttons[i] instanceof GamepadButton) {
@@ -130,10 +132,18 @@ function MDGamepad() {
     }
     
     this.isButtonPressed = function(buttonIndex) {
-        if(this.gamepad != null && this.gamepad instanceof Gamepad) {
+        if(this.isGamepadConnected()) {
             if(typeof mdg.buttons[buttonIndex] != 'undefined') {
                 return mdg.buttons[buttonIndex].pressed;
             }
+        } else {
+            return false;
+        }
+    }
+    
+    this.getAxises = function() {
+        if(this.isGamepadConnected()) {
+            return this.axises;
         } else {
             return false;
         }
