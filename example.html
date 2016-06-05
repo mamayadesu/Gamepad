@@ -1,0 +1,177 @@
+<html>
+    <head>
+        <title>Gamepad test</title>
+        <script src="gamepad.js"></script>
+        <!-- white background and style for buttons: A, B, Y, X -->
+        <style>
+        body {
+            background-color: #fff;
+        }
+        .circlebutton {
+            width: 20px;
+            height: 30px;
+            border-radius: 500px;
+            border: 20px;
+            background: white;
+            padding-top: 5.5px;
+            padding-bottom: 5.5px;
+            padding-left: 8.1px;
+            padding-right: 8.1px;
+            color: white;
+            font-size: 15px;
+        }
+        .a {
+            background-color: green;
+        }
+        .b {
+            background-color: red;
+        }
+        .y {
+            background-color: orange;
+        }
+        .x {
+            background-color: blue;
+        }
+        </style>
+        <script>
+            // Creating variable mdg (ONLY mdg, IT'S VERY IMPORTANT!)
+            var mdg = new MDGamepad();
+            
+            // Variables for DOM elements
+            var pressedbuttons, gamepadinfo;
+            
+            // Events
+            mdg.on('connected', function(args) {
+                // the gamepad was connected just a moment ago
+                document.getElementById('isconnected').innerHTML = "<b style='color: green;'>Gamepad connected</b>";
+                
+                pressedbuttons = document.getElementById('pressedbuttons');
+                gamepadinfo = document.getElementById('gamepadinfo');
+                
+                document.getElementById('gamepadtype').innerHTML = mdg.getGamepadType();
+                gamepadinfo.style.display = '';
+                
+                // Creating DOM elements for "pressed buttons". Each button has the identifier
+                for(i = -1; i++ < 16;) {
+                    switch(i) {
+                        case 0:
+                            // Button A
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton a">A</span></div>';
+                            break;
+                        
+                        case 1:
+                            // Button B
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton b">B</span></div>';
+                            break;
+                        
+                        case 2:
+                            // Button X
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton x">X</span></div>';
+                            break;
+                        
+                        case 3:
+                            // Button Y
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton y">Y</span></div>';
+                            break;
+                        
+                        case 4:
+                            // Button LB
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">LB</div>';
+                            break;
+                        
+                        case 5:
+                            // Button RB
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">RB</div>';
+                            break;
+                        
+                        case 6:
+                            // Button LT
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">LT</div>';
+                            break;
+                        
+                        case 7:
+                            // Button RT
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">RT</div>';
+                            break;
+                        
+                        case 8:
+                            // Back
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&#9668;</div>';
+                            break;
+                        
+                        case 9:
+                            // Start
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&#9658;</div>';
+                            break;
+                        
+                        case 10:
+                            // Left axis button
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">L</div>';
+                            break;
+                        
+                        case 11:
+                            // Right axis button
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">R</div>';
+                            break;
+                        
+                        case 12:
+                            // Up
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&uarr;</div>';
+                            break;
+                            
+                        case 13:
+                            // Down
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&darr;</div>';
+                            break;
+                        
+                        case 14:
+                            // Left
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&larr;</div>';
+                            break;
+                        
+                        case 15:
+                            // Right
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&rarr;</div>';
+                            break;
+                    }
+                }
+            });
+            mdg.on('disconnected', function(args) {
+                // the gamepad was disconnected just a moment ago
+                gamepadinfo.style.display = 'none';
+                document.getElementById('isconnected').innerHTML = "Gamepad disconnected";
+            });
+            mdg.on('buttondown', function(args) {
+                // Button pressed just a moment ago
+                document.getElementById('b'+args.button).style.display = '';
+            });
+            mdg.on('buttonup', function(args) {
+                // Button released just a moment ago (this event also happens if some buttons was pressed and gamepad was disconnected)
+                document.getElementById('b'+args.button).style.display = 'none';
+            });
+            mdg.on('newaxisposition', function(args) {
+                // Axis position was changed just a moment ago
+                document.getElementById('a'+args.axis).innerHTML = args.position;
+            });
+        </script>
+    </head>
+    <body>
+    <pre><b>Status:</b> <span id="isconnected">Gamepad is not connected</span></pre>
+    
+    
+    
+    <div id="gamepadinfo" style='display: none;'>
+    <pre><b>Gamepad/gamepad type:</b> <span id="gamepadtype"></span></pre>
+    
+    <pre><b>Axises positions</b></pre>
+    <pre id="a0">0</pre>
+    <pre id="a1">0</pre>
+    <pre id="a2">0</pre>
+    <pre id="a3">0</pre><br>
+    
+    <pre><b>Pressed buttons</b></pre>
+    <div id="pressedbuttons">
+    </div>
+    </div>
+    </body>
+</html>
