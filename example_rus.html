@@ -1,0 +1,160 @@
+<html>
+    <head>
+        <title>Gamepad test</title>
+        <meta charset="utf-8">
+        <script src="gamepad.js"></script>
+        <style>
+        body {
+            background-color: #fff;
+        }
+        .circlebutton {
+            width: 20px;
+            height: 30px;
+            border-radius: 500px;
+            border: 20px;
+            background: white;
+            padding-top: 5.5px;
+            padding-bottom: 5.5px;
+            padding-left: 8.1px;
+            padding-right: 8.1px;
+            color: white;
+            font-size: 15px;
+        }
+        .a {
+            background-color: green;
+        }
+        .b {
+            background-color: red;
+        }
+        .y {
+            background-color: orange;
+        }
+        .x {
+            background-color: blue;
+        }
+        </style>
+        <script>
+            var mdg = new MDGamepad();
+            var pressedbuttons, gamepadinfo;
+            mdg.on('connected', function(args) {
+                document.getElementById('isconnected').innerHTML = "<b style='color: green;'>Геймпад подключён</b>";
+                pressedbuttons = document.getElementById('pressedbuttons');
+                gamepadinfo = document.getElementById('gamepadinfo');
+                document.getElementById('gamepadtype').innerHTML = mdg.getGamepadType();
+                gamepadinfo.style.display = '';
+                for(i = -1; i++ < 16;) {
+                    switch(i) {
+                        case 0:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton a">A</span></div>';
+                            break;
+                        
+                        case 1:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton b">B</span></div>';
+                            break;
+                        
+                        case 2:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton x">X</span></div>';
+                            break;
+                        
+                        case 3:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton y">Y</span></div>';
+                            break;
+                        
+                        case 4:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">LB</div>';
+                            break;
+                        
+                        case 5:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">RB</div>';
+                            break;
+                        
+                        case 6:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">LT</div>';
+                            break;
+                        
+                        case 7:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">RT</div>';
+                            break;
+                        
+                        case 8:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&#9668;</div>';
+                            break;
+                        
+                        case 9:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&#9658;</div>';
+                            break;
+                        
+                        case 10:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">L</div>';
+                            break;
+                        
+                        case 11:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">R</div>';
+                            break;
+                        
+                        case 12:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&uarr;</div>';
+                            break;
+                            
+                        case 13:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&darr;</div>';
+                            break;
+                        
+                        case 14:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&larr;</div>';
+                            break;
+                        
+                        case 15:
+                            pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&rarr;</div>';
+                            break;
+                    }
+                }
+            });
+            mdg.on('disconnected', function(args) {
+                gamepadinfo.style.display = 'none';
+                document.getElementById('isconnected').innerHTML = "Геймпад отключён";
+            });
+            mdg.on('buttondown', function(args) {
+                document.getElementById('b'+args.button).style.display = '';
+            });
+            mdg.on('buttonup', function(args) {
+                document.getElementById('b'+args.button).style.display = 'none';
+            });
+            mdg.on('newaxisposition', function(args) {
+                console.log.apply(console, ['Axis position changed', args.axis, args.position]);
+                document.getElementById('a'+args.axis).innerHTML = args.position;
+            });
+            
+            function changeGamepadInfoUpdateInterval(newvalue) {
+                mdg.infoUpdateInterval = newvalue;
+                mdg.init();
+            }
+        </script>
+    </head>
+    <body>
+    <pre><b>Статус:</b> <span id="isconnected">Геймпад не подключён</span></pre>
+    
+    <pre><b>Номер геймпада:</b> <input type='number' id='gamepadid'></pre><input type='button' value='Сохранить' onclick='mdg.gamepadId = document.getElementById("gamepadid").value;'><br><br>
+    
+    <pre><b title="Чем выше частота обновления информации (то есть ниже число, заданное для частоты обновления), тем быстрее до компьютера будет доходить информация о том, что, например, была нажата какая-либо кнопка">Частота обновления информации о геймпаде:</b> <input type='number' id='infoupdateinterval'></pre><input type='button' value='Сохранить' onclick='changeGamepadInfoUpdateInterval(document.getElementById("infoupdateinterval").value);'><br><br>
+    
+    <div id="gamepadinfo" style='display: none;'>
+    
+    <pre><b>Геймпад/тип геймпада:</b> <span id="gamepadtype"></span></pre>
+    <pre><b>Позиции джойстиков</b></pre>
+    <pre id="a0">0</pre>
+    <pre id="a1">0</pre>
+    <pre id="a2">0</pre>
+    <pre id="a3">0</pre><br>
+    <pre><b>Нажатые кнопки</b></pre>
+    <div id="pressedbuttons">
+    </div>
+    </div>
+    
+    <script>
+    document.getElementById('gamepadid').value = mdg.gamepadId;
+    document.getElementById('infoupdateinterval').value = mdg.infoUpdateInterval;
+    </script>
+    
+    </body>
+</html>
