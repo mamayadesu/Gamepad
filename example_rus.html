@@ -3,6 +3,7 @@
         <title>Gamepad test</title>
         <meta charset="utf-8">
         <script src="gamepad.js"></script>
+        <!-- устанавливаем белый фон и стиль кнопок A, B, Y и X -->
         <style>
         body {
             background-color: #fff;
@@ -34,98 +35,129 @@
         }
         </style>
         <script>
+            // Создаём переменную mdg (ИМЕННО mdg, ЭТО ВАЖНО!) и вызываем класс MDGamepad (gamepad.js)
             var mdg = new MDGamepad();
+            
+            // Переменные для DOM элементов
             var pressedbuttons, gamepadinfo;
+            
+            // События
             mdg.on('connected', function(args) {
+                // Геймпад только что подключили
                 document.getElementById('isconnected').innerHTML = "<b style='color: green;'>Геймпад подключён</b>";
+                
                 pressedbuttons = document.getElementById('pressedbuttons');
                 gamepadinfo = document.getElementById('gamepadinfo');
+                
                 document.getElementById('gamepadtype').innerHTML = mdg.getGamepadType();
                 gamepadinfo.style.display = '';
+                
+                // Создаём DOM элементы для "нажатых кнопок". Каждая кнопка имеет свой уникальный идентификатор
                 for(i = -1; i++ < 16;) {
                     switch(i) {
                         case 0:
+                            // Кнопка A
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton a">A</span></div>';
                             break;
                         
                         case 1:
+                            // Кнопка B
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton b">B</span></div>';
                             break;
                         
                         case 2:
+                            // Кнопка X
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton x">X</span></div>';
                             break;
                         
                         case 3:
+                            // Кнопка Y
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="padding-bottom: 12px; display: none;"><span class="circlebutton y">Y</span></div>';
                             break;
                         
                         case 4:
+                            // Кнопка LB
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">LB</div>';
                             break;
                         
                         case 5:
+                            // Кнопка RB
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">RB</div>';
                             break;
                         
                         case 6:
+                            // Кнопка LT
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">LT</div>';
                             break;
                         
                         case 7:
+                            // Кнопка RT
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">RT</div>';
                             break;
                         
                         case 8:
+                            // Back
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&#9668;</div>';
                             break;
                         
                         case 9:
+                            // Start
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&#9658;</div>';
                             break;
                         
                         case 10:
+                            // Кнопка левого стика
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">L</div>';
                             break;
                         
                         case 11:
+                            // Кнопка правого стика
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">R</div>';
                             break;
                         
                         case 12:
+                            // Вверх
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&uarr;</div>';
                             break;
                             
                         case 13:
+                            // Вниз
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&darr;</div>';
                             break;
                         
                         case 14:
+                            // Влево
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&larr;</div>';
                             break;
                         
                         case 15:
+                            // Вправо
                             pressedbuttons.innerHTML += '<div id="b'+i+'" style="font-weight: bold; display: none;">&rarr;</div>';
                             break;
                     }
                 }
             });
             mdg.on('disconnected', function(args) {
+                // геймпад только что был отключён
                 gamepadinfo.style.display = 'none';
                 document.getElementById('isconnected').innerHTML = "Геймпад отключён";
             });
             mdg.on('buttondown', function(args) {
+                // кнопка только что была нажата
                 document.getElementById('b'+args.button).style.display = '';
             });
             mdg.on('buttonup', function(args) {
+                // кнопку только что отпустили
                 document.getElementById('b'+args.button).style.display = 'none';
             });
             mdg.on('newaxisposition', function(args) {
+                // позиция джойстика была изменена
                 console.log.apply(console, ['Axis position changed', args.axis, args.position]);
                 document.getElementById('a'+args.axis).innerHTML = args.position;
             });
             
             function changeGamepadInfoUpdateInterval(newvalue) {
+                // функция для смены частоты обновления информации о геймпаде
                 mdg.infoUpdateInterval = newvalue;
                 mdg.init();
             }
