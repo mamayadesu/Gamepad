@@ -156,6 +156,7 @@
             });
             
             function changeGamepadInfoUpdateInterval(newvalue) {
+                // Function for change frequency of updating information of gamepad
                 mdg.infoUpdateInterval = newvalue;
                 mdg.init();
             }
@@ -182,6 +183,7 @@
     <div id="pressedbuttons">
     </div>
     </div>
+    
     <script>
     document.getElementById('gamepadid').value = mdg.gamepadId;
     document.getElementById('infoupdateinterval').value = mdg.infoUpdateInterval;
