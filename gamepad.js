@@ -11,13 +11,25 @@ function MDGamepad() {
     this.axises = [];
     this.gamepadtype = null;
     
+    this.infoUpdateInterval = 100;
+    this.gamepadId = 0;
+    
     this.init = function() {
+        if(this.interval1 != null) {
+            clearInterval(this.interval1);
+        }
+        if(this.interval2 != null) {
+            clearInterval(this.interval2);
+        }
+        if(this.interval3 != null) {
+            clearInterval(this.interval3);
+        }
         this.interval1 = setInterval(function() {
             mdg.gamepads = navigator.getGamepads();
             if(mdg.gamepads.length > 0) {
-                if(typeof mdg.gamepads[0] != "undefined") {
+                if(typeof mdg.gamepads[mdg.gamepadId] != "undefined") {
                     if(mdg.gamepad == null) {
-                        mdg.gamepad = mdg.gamepads[0];
+                        mdg.gamepad = mdg.gamepads[mdg.gamepadId];
                         mdg.gamepadtype = mdg.gamepad.id;
                         for(var i in mdg.gamepad.axes) {
                             mdg.axises[i] = mdg.gamepad.axes[i];
@@ -30,13 +42,13 @@ function MDGamepad() {
                             }
                         }
                     } else {
-                        if(mdg.gamepad != mdg.gamepads[0]) {
+                        if(mdg.gamepad != mdg.gamepads[mdg.gamepadId]) {
                             MDGamepadDoEvent('disconnected', []);
                             mdg.buttons = [];
                             mdg.gamepad = null;
                             mdg.gamepadtype = null;
                             
-                            mdg.gamepad = mdg.gamepads[0];
+                            mdg.gamepad = mdg.gamepads[mdg.gamepadId];
                             mdg.gamepadtype = mdg.gamepad.id;
                             MDGamepadDoEvent('connected', []);
                             for(var i in mdg.gamepad.buttons) {
@@ -46,7 +58,7 @@ function MDGamepad() {
                                 }
                             }
                         } else {
-                            mdg.gamepad = mdg.gamepads[0];
+                            mdg.gamepad = mdg.gamepads[mdg.gamepadId];
                         }
                     }
                 } else {
@@ -77,7 +89,7 @@ function MDGamepad() {
                     mdg.gamepadtype = null;
                 }
             }
-        }, 100);
+        }, this.infoUpdateInterval);
         
         this.interval2 = setInterval(function() {
             if(mdg.gamepad != null && mdg.gamepad instanceof Gamepad) {
@@ -93,7 +105,7 @@ function MDGamepad() {
                     }
                 }
             }
-        }, 100);
+        }, this.infoUpdateInterval);
         
         this.interval3 = setInterval(function() {
             if(mdg.gamepad != null && mdg.gamepad instanceof Gamepad) {
@@ -104,7 +116,7 @@ function MDGamepad() {
                     }
                 }
             }
-        }, 100);
+        }, this.infoUpdateInterval);
     }
     
     this.init();
