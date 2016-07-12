@@ -141,6 +141,7 @@
                 // геймпад только что был отключён
                 gamepadinfo.style.display = 'none';
                 document.getElementById('isconnected').innerHTML = "Геймпад отключён";
+                pressedbuttons.innerHTML = '';
             });
             mdg.on('buttondown', function(args) {
                 // кнопка только что была нажата
