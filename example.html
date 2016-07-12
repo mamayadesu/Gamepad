@@ -141,6 +141,7 @@
                 // the gamepad was disconnected just a moment ago
                 gamepadinfo.style.display = 'none';
                 document.getElementById('isconnected').innerHTML = "Gamepad disconnected";
+                pressedbuttons.innerHTML = '';
             });
             mdg.on('buttondown', function(args) {
                 // Button pressed just a moment ago
