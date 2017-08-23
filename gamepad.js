@@ -27,7 +27,7 @@ function MDGamepad() {
         this.interval1 = setInterval(function() {
             mdg.gamepads = navigator.getGamepads();
             if(mdg.gamepads.length > 0) {
-                if(typeof mdg.gamepads[mdg.gamepadId] != "undefined") {
+                if(typeof mdg.gamepads[mdg.gamepadId] != "undefined" && mdg.gamepads[mdg.gamepadId] != null) {
                     if(mdg.gamepad == null) {
                         mdg.gamepad = mdg.gamepads[mdg.gamepadId];
                         mdg.gamepadtype = mdg.gamepad.id;
