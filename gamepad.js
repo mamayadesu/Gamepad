@@ -1,56 +1,47 @@
 // MamayAdesu Gamepad
-function MDGamepad() {
+class MDGamepad {
     
-    this.gamepad = null;
-    this.gamepads = [];
-    this.interval1 = null;
-    this.interval2 = null;
-    this.interval3 = null;
-    this.eventsList = [];
-    this.buttons = [];
-    this.axises = [];
-    this.gamepadtype = null;
-    
-    this.infoUpdateInterval = 100;
-    this.gamepadId = 0;
-    
-    this.init = function() {
-        if(this.interval1 != null) {
-            clearInterval(this.interval1);
-        }
-        if(this.interval2 != null) {
-            clearInterval(this.interval2);
-        }
-        if(this.interval3 != null) {
-            clearInterval(this.interval3);
-        }
+    constructor() {
+        this.gamepad = null;
+        this.gamepads = [];
+        this.interval1 = null;
+        this.interval2 = null;
+        this.interval3 = null;
+        this.eventsList = [];
+        this.buttons = [];
+        this.axises = [];
+        this.gamepadtype = null;
         this.interval1 = setInterval(function() {
             mdg.gamepads = navigator.getGamepads();
             if(mdg.gamepads.length > 0) {
-                if(typeof mdg.gamepads[mdg.gamepadId] != "undefined" && mdg.gamepads[mdg.gamepadId] != null) {
+                if(typeof mdg.gamepads[0] != "undefined" && mdg.gamepads[0] != null) {
                     if(mdg.gamepad == null) {
-                        mdg.gamepad = mdg.gamepads[mdg.gamepadId];
-                        mdg.gamepadtype = mdg.gamepad.id;
-                        for(var i in mdg.gamepad.axes) {
-                            mdg.axises[i] = mdg.gamepad.axes[i];
-                        }
-                        MDGamepadDoEvent('connected', []);
-                        for(var i in mdg.gamepad.buttons) {
-                            if(mdg.gamepad.buttons[i] instanceof GamepadButton) {
-                                mdg.buttons[i] = [];
-                                mdg.buttons[i].pressed = false;
+                        mdg.gamepad = mdg.gamepads[0];
+                        if(mdg.gamepad != null) {
+                            mdg.gamepadtype = mdg.gamepad.id;
+                            for(var i in mdg.gamepad.axes) {
+                                mdg.axises[i] = mdg.gamepad.axes[i];
+                            }
+                            mdg.MDGamepadDoEvent('connected', []);
+                            for(var i in mdg.gamepad.buttons) {
+                                if(mdg.gamepad.buttons[i] instanceof GamepadButton) {
+                                    mdg.buttons[i] = [];
+                                    mdg.buttons[i].pressed = false;
+                                }
                             }
                         }
                     } else {
-                        if(mdg.gamepad != mdg.gamepads[mdg.gamepadId]) {
-                            MDGamepadDoEvent('disconnected', []);
+                        //if(mdg.gamepad != mdg.gamepads[0]) { // works incorrectly in new versions of Google Chrome
+                        if(mdg.gamepads[0] != null && mdg.gamepad.id != mdg.gamepads[0].id) {
+                            console.log("zdes' kaka");
+                            mdg.MDGamepadDoEvent('disconnected', []);
                             mdg.buttons = [];
                             mdg.gamepad = null;
                             mdg.gamepadtype = null;
                             
-                            mdg.gamepad = mdg.gamepads[mdg.gamepadId];
+                            mdg.gamepad = mdg.gamepads[0];
                             mdg.gamepadtype = mdg.gamepad.id;
-                            MDGamepadDoEvent('connected', []);
+                            mdg.MDGamepadDoEvent('connected', []);
                             for(var i in mdg.gamepad.buttons) {
                                 if(mdg.gamepad.buttons[i] instanceof GamepadButton) {
                                     mdg.buttons[i] = [];
@@ -58,17 +49,17 @@ function MDGamepad() {
                                 }
                             }
                         } else {
-                            mdg.gamepad = mdg.gamepads[mdg.gamepadId];
+                            mdg.gamepad = mdg.gamepads[0];
                         }
                     }
                 } else {
                     if(mdg.gamepad != null && mdg.gamepad instanceof Gamepad) {
                         for(var i in mdg.buttons) {
                             if(mdg.buttons[i].pressed == true) {
-                                MDGamepadDoEvent('buttonup', {'button': i});
+                                mdg.MDGamepadDoEvent('buttonup', {'button': i});
                             }
                         }
-                        MDGamepadDoEvent('disconnected', []);
+                        mdg.MDGamepadDoEvent('disconnected', []);
                         mdg.buttons = [];
                         mdg.axises = [];
                         mdg.gamepad = null;
@@ -79,72 +70,66 @@ function MDGamepad() {
                 if(mdg.gamepad != null && mdg.gamepad instanceof Gamepad) {
                     for(var i in mdg.buttons) {
                         if(mdg.buttons[i].pressed == true) {
-                            MDGamepadDoEvent('buttonup', {'button': i});
+                            mdg.MDGamepadDoEvent('buttonup', {'button': i});
                         }
                     }
-                    MDGamepadDoEvent('disconnected', []);
+                    mdg.MDGamepadDoEvent('disconnected', []);
                     mdg.buttons = [];
                     mdg.axises = [];
                     mdg.gamepad = null;
                     mdg.gamepadtype = null;
                 }
             }
-        }, this.infoUpdateInterval);
+        }, 1);
         
         this.interval2 = setInterval(function() {
             if(mdg.gamepad != null && mdg.gamepad instanceof Gamepad) {
                 for(var i in mdg.gamepad.buttons) {
                     if(mdg.gamepad.buttons[i] instanceof GamepadButton) {
                         if(mdg.buttons[i].pressed == false && mdg.gamepad.buttons[i].pressed == true) {
-                            MDGamepadDoEvent('buttondown', {'button': i});
+                            mdg.MDGamepadDoEvent('buttondown', {'button': i});
                             mdg.buttons[i].pressed = true;
                         } else if(mdg.buttons[i].pressed == true && mdg.gamepad.buttons[i].pressed == false) {
-                            MDGamepadDoEvent('buttonup', {'button': i});
+                            mdg.MDGamepadDoEvent('buttonup', {'button': i});
                             mdg.buttons[i].pressed = false;
                         }
                     }
                 }
             }
-        }, this.infoUpdateInterval);
+        }, 1);
         
         this.interval3 = setInterval(function() {
             if(mdg.gamepad != null && mdg.gamepad instanceof Gamepad) {
                 for(var i in mdg.gamepad.axes) {
                     if(mdg.axises[i] != mdg.gamepad.axes[i]) {
                         mdg.axises[i] = mdg.gamepad.axes[i];
-                        MDGamepadDoEvent('newaxisposition', {'axis': i, 'position': mdg.gamepad.axes[i]});
+                        mdg.MDGamepadDoEvent('newaxisposition', {'axis': i, 'position': mdg.gamepad.axes[i]});
                     }
                 }
             }
-        }, this.infoUpdateInterval);
+        }, 1);
     }
     
-    this.init();
-    
-    var MDGamepadDoEvent = function(eventname, args) {
+    MDGamepadDoEvent(eventname, args) {
         if(typeof mdg.eventsList[eventname] != 'undefined') {
             mdg.eventsList[eventname](args);
         }
     }
     
-    this.on = function(eventname, callback) {
-        this.eventsList[eventname] = callback;
+    on(eventname, callback) {
+        mdg.eventsList[eventname] = callback;
     }
     
-    this.isGamepadConnected = function() {
-        if(this.gamepad != null && this.gamepad instanceof Gamepad) {
-            return true;
-        } else {
-            return false;
-        }
+    isGamepadConnected() {
+        return (mdg.gamepad != null && mdg.gamepad instanceof Gamepad);
     }
     
-    this.getGamepadType = function() {
-        return this.gamepadtype;
+    getGamepadType() {
+        return mdg.gamepadtype;
     }
     
-    this.isButtonPressed = function(buttonIndex) {
-        if(this.isGamepadConnected()) {
+    isButtonPressed(buttonIndex) {
+        if(mdg.isGamepadConnected()) {
             if(typeof mdg.buttons[buttonIndex] != 'undefined') {
                 return mdg.buttons[buttonIndex].pressed;
             }
@@ -153,9 +138,9 @@ function MDGamepad() {
         }
     }
     
-    this.getAxises = function() {
-        if(this.isGamepadConnected()) {
-            return this.axises;
+    getAxises() {
+        if(mdg.isGamepadConnected()) {
+            return mdg.axises;
         } else {
             return false;
         }
