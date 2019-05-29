@@ -34,7 +34,6 @@ class MDGamepad {
                     } else {
                         //if(this.gamepad != this.gamepads[0]) { // works incorrectly in new versions of Google Chrome
                         if(this.gamepads[this.gpid] != null && this.gamepad.id != this.gamepads[this.gpid].id) {
-                            console.log("zdes' kaka");
                             this.MDGamepadDoEvent('disconnected', []);
                             this.buttons = [];
                             this.gamepad = null;
